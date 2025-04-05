@@ -1,0 +1,42 @@
+# Node.js
+node_modules/
+dist/
+build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+yarn.lock
+.pnpm-debug.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+logs/*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+.env
+.env.*.local
+
+
+# Scraper files
+screenshots/
+cache/
+domains.json
+cache.json

@@ -1,0 +1,302 @@
+[
+  {
+    "url": "https://www.cbc.ca/news",
+    "owner": {
+      "name": "Canadian Broadcasting Corporation",
+      "displayName": "CBC News",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://ici.radio-canada.ca/info",
+    "owner": {
+      "name": "Canadian Broadcasting Corporation",
+      "displayName": "Radio-Canada Info",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "fr"
+  },
+  {
+    "url": "https://www.theglobeandmail.com",
+    "owner": {
+      "name": "The Woodbridge Company",
+      "displayName": "The Globe and Mail",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://nationalpost.com",
+    "owner": {
+      "name": "Postmedia Network Canada Corp.",
+      "displayName": "National Post",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.thestar.com",
+    "owner": {
+      "name": "NordStar Capital",
+      "displayName": "Toronto Star",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.ctvnews.ca",
+    "owner": {
+      "name": "Bell Media",
+      "displayName": "CTV News",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://globalnews.ca",
+    "owner": {
+      "name": "Corus Entertainment",
+      "displayName": "Global News",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.lapresse.ca",
+    "owner": {
+      "name": "La Presse (Non-profit Trust)",
+      "displayName": "La Presse",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "fr"
+  },
+  {
+    "url": "https://www.ledevoir.com",
+    "owner": {
+      "name": "Le Devoir Inc.",
+      "displayName": "Le Devoir",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "fr"
+  },
+  {
+    "url": "https://www.journaldemontreal.com",
+    "owner": {
+      "name": "Quebecor Media Inc.",
+      "displayName": "Le Journal de Montréal",
+      "country": "CA"
+    },
+    "category": "News",
+    "language": "fr"
+  },
+  {
+    "url": "https://www.nytimes.com",
+    "owner": {
+      "name": "The New York Times Company",
+      "displayName": "The New York Times",
+      "country": "US"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.wsj.com",
+    "owner": {
+      "name": "News Corp (Dow Jones & Company)",
+      "displayName": "The Wall Street Journal",
+      "country": "US"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.washingtonpost.com",
+    "owner": {
+      "name": "Nash Holdings (Jeff Bezos)",
+      "displayName": "The Washington Post",
+      "country": "US"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.cnn.com",
+    "owner": {
+      "name": "Warner Bros. Discovery",
+      "displayName": "CNN",
+      "country": "US"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.foxnews.com",
+    "owner": {
+      "name": "Fox Corporation",
+      "displayName": "Fox News",
+      "country": "US"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://apnews.com",
+    "owner": {
+      "name": "Associated Press",
+      "displayName": "AP",
+      "country": "US"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.bbc.com/news",
+    "owner": {
+      "name": "British Broadcasting Corporation",
+      "displayName": "BBC News",
+      "country": "GB"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.theguardian.com/international",
+    "owner": {
+      "name": "Scott Trust Limited (Guardian Media Group)",
+      "displayName": "The Guardian",
+      "country": "GB"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.reuters.com",
+    "owner": {
+      "name": "Thomson Reuters",
+      "displayName": "Reuters",
+      "country": "GB"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.abc.net.au/news",
+    "owner": {
+      "name": "Australian Broadcasting Corporation",
+      "displayName": "ABC News (Australia)",
+      "country": "AU"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.smh.com.au",
+    "owner": {
+      "name": "Nine Entertainment",
+      "displayName": "The Sydney Morning Herald",
+      "country": "AU"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.tagesschau.de",
+    "owner": {
+      "name": "ARD",
+      "displayName": "Tagesschau",
+      "country": "DE"
+    },
+    "category": "News",
+    "language": "de"
+  },
+  {
+    "url": "https://www.spiegel.de",
+    "owner": {
+      "name": "Spiegel-Verlag",
+      "displayName": "Der Spiegel",
+      "country": "DE"
+    },
+    "category": "News",
+    "language": "de"
+  },
+  {
+    "url": "https://www.lemonde.fr",
+    "owner": {
+      "name": "Groupe Le Monde",
+      "displayName": "Le Monde",
+      "country": "FR"
+    },
+    "category": "News",
+    "language": "fr"
+  },
+  {
+    "url": "https://www.lefigaro.fr",
+    "owner": {
+      "name": "Groupe Figaro",
+      "displayName": "Le Figaro",
+      "country": "FR"
+    },
+    "category": "News",
+    "language": "fr"
+  },
+  {
+    "url": "https://timesofindia.indiatimes.com",
+    "owner": {
+      "name": "Bennett, Coleman & Co. Ltd. (The Times Group)",
+      "displayName": "The Times of India",
+      "country": "IN"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.thehindu.com",
+    "owner": {
+      "name": "The Hindu Group",
+      "displayName": "The Hindu",
+      "country": "IN"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.japantimes.co.jp",
+    "owner": {
+      "name": "The Japan Times, Ltd.",
+      "displayName": "The Japan Times",
+      "country": "JP"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.asahi.com/ajw/",
+    "owner": {
+      "name": "The Asahi Shimbun Company",
+      "displayName": "Asahi Shimbun (English)",
+      "country": "JP"
+    },
+    "category": "News",
+    "language": "en"
+  },
+  {
+    "url": "https://www.aljazeera.com",
+    "owner": {
+      "name": "Al Jazeera Media Network",
+      "displayName": "Al Jazeera English",
+      "country": "QA"
+    },
+    "category": "News",
+    "language": "en"
+  }
+]

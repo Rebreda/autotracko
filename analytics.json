@@ -1,0 +1,956 @@
+{
+  "generationTimestamp": "2025-04-03T20:00:56.913Z",
+  "inputFile": "results.json",
+  "summary": {
+    "totalSitesProcessed": 30,
+    "sitesWithErrors": 0,
+    "sitesWithTrackers": 29,
+    "totalTrackerInstances": 1593,
+    "totalUniqueTrackerDomains": 537,
+    "totalUniqueTrackerOwners": 1593,
+    "averageTrackersPerSite": 53.1,
+    "averageUniqueTrackerDomainsPerSite": 53.1,
+    "averageUniqueTrackerOwnersPerSite": 53.1,
+    "averagePageSizeBytes": 5095883
+  },
+  "trackerCountDistribution": {
+    "min": 0,
+    "max": 178,
+    "median": 50.5,
+    "mean": 53.1
+  },
+  "topTrackerDomains": [
+    {
+      "name": "securepubads.g.doubleclick.net",
+      "count": 22,
+      "percentage": 73.33
+    },
+    {
+      "name": "pagead2.googlesyndication.com",
+      "count": 22,
+      "percentage": 73.33
+    },
+    {
+      "name": "www.google.com",
+      "count": 20,
+      "percentage": 66.67
+    },
+    {
+      "name": "htlb.casalemedia.com",
+      "count": 18,
+      "percentage": 60
+    },
+    {
+      "name": "ib.adnxs.com",
+      "count": 18,
+      "percentage": 60
+    },
+    {
+      "name": "www.googletagmanager.com",
+      "count": 18,
+      "percentage": 60
+    },
+    {
+      "name": "fastlane.rubiconproject.com",
+      "count": 17,
+      "percentage": 56.67
+    },
+    {
+      "name": "sb.scorecardresearch.com",
+      "count": 16,
+      "percentage": 53.33
+    },
+    {
+      "name": "static.chartbeat.com",
+      "count": 16,
+      "percentage": 53.33
+    },
+    {
+      "name": "tpc.googlesyndication.com",
+      "count": 15,
+      "percentage": 50
+    },
+    {
+      "name": "c.amazon-adsystem.com",
+      "count": 15,
+      "percentage": 50
+    },
+    {
+      "name": "fonts.googleapis.com",
+      "count": 14,
+      "percentage": 46.67
+    },
+    {
+      "name": "fonts.gstatic.com",
+      "count": 14,
+      "percentage": 46.67
+    },
+    {
+      "name": "ping.chartbeat.net",
+      "count": 14,
+      "percentage": 46.67
+    },
+    {
+      "name": "td.doubleclick.net",
+      "count": 14,
+      "percentage": 46.67
+    },
+    {
+      "name": "config.aps.amazon-adsystem.com",
+      "count": 14,
+      "percentage": 46.67
+    },
+    {
+      "name": "aax.amazon-adsystem.com",
+      "count": 14,
+      "percentage": 46.67
+    },
+    {
+      "name": "mab.chartbeat.com",
+      "count": 13,
+      "percentage": 43.33
+    },
+    {
+      "name": "match.adsrvr.org",
+      "count": 13,
+      "percentage": 43.33
+    },
+    {
+      "name": "googleads.g.doubleclick.net",
+      "count": 13,
+      "percentage": 43.33
+    }
+  ],
+  "topTrackerOwners": [
+    {
+      "name": {
+        "name": "Google Ads",
+        "displayName": "Google Ads (Google)",
+        "localizedName": "Google Ads",
+        "ownedBy": "Google LLC"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Google LLC",
+        "displayName": "Google",
+        "privacyPolicy": "https://policies.google.com/privacy?hl=en&gl=us",
+        "url": "http://www.google.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Google Ads",
+        "displayName": "Google Ads (Google)",
+        "localizedName": "Google Ads",
+        "ownedBy": "Google LLC"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Ad Lightning, Inc.",
+        "displayName": "Ad Lightning",
+        "privacyPolicy": "https://www.adlightning.com/privacy"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Didomi",
+        "displayName": "Didomi"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Adobe Inc.",
+        "displayName": "Adobe",
+        "privacyPolicy": "https://www.adobe.com/privacy/marketing-cloud.html",
+        "url": "http://www.tubemogul.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Google Ads",
+        "displayName": "Google Ads (Google)",
+        "localizedName": "Google Ads",
+        "ownedBy": "Google LLC"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Piano Software",
+        "displayName": "Piano Software",
+        "privacyPolicy": "https://piano.io/privacy-policy/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Leven Labs, Inc. DBA Admiral",
+        "displayName": "Admiral"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Adobe Inc.",
+        "displayName": "Adobe",
+        "privacyPolicy": "https://www.adobe.com/privacy/marketing-cloud.html",
+        "url": "http://www.tubemogul.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Adobe Inc.",
+        "displayName": "Adobe",
+        "privacyPolicy": "https://www.adobe.com/privacy/marketing-cloud.html",
+        "url": "http://www.tubemogul.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Viafoura Inc.",
+        "displayName": "Viafoura"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Integral Ad Science, Inc.",
+        "displayName": "Integral Ad Science",
+        "privacyPolicy": "https://integralads.com/privacy-policy/",
+        "url": "http://adsafemedia.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Lotame Solutions, Inc.",
+        "displayName": "Lotame Solutions",
+        "privacyPolicy": "https://www.lotame.com/about-lotame/privacy/lotame-corporate-websites-privacy-policy/",
+        "url": "http://www.lotame.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Prospect One",
+        "displayName": "Prospect One",
+        "privacyPolicy": "https://www.jsdelivr.com/privacy-policy-jsdelivr-net"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Lotame Solutions, Inc.",
+        "displayName": "Lotame Solutions",
+        "privacyPolicy": "https://www.lotame.com/about-lotame/privacy/lotame-corporate-websites-privacy-policy/",
+        "url": "http://www.lotame.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "TripleLift",
+        "displayName": "TripleLift",
+        "privacyPolicy": "https://triplelift.com/privacy/",
+        "url": "http://triplelift.com/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Facebook, Inc.",
+        "displayName": "Facebook",
+        "privacyPolicy": "https://www.facebook.com/privacy/explanation",
+        "url": "https://facebook.com"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "Sharethrough, Inc.",
+        "displayName": "Sharethrough",
+        "privacyPolicy": "https://platform-cdn.sharethrough.com/privacy-policy"
+      },
+      "count": 1,
+      "percentage": 3.33
+    },
+    {
+      "name": {
+        "name": "BlueConic, Inc.",
+        "displayName": "BlueConic",
+        "privacyPolicy": "https://www.blueconic.com/privacy-policy/"
+      },
+      "count": 1,
+      "percentage": 3.33
+    }
+  ],
+  "topTrackerCategories": [
+    {
+      "name": "Advertising",
+      "count": 1213,
+      "percentage": 76.15
+    },
+    {
+      "name": "Ad Motivated Tracking",
+      "count": 1199,
+      "percentage": 75.27
+    },
+    {
+      "name": "Analytics",
+      "count": 519,
+      "percentage": 32.58
+    },
+    {
+      "name": "Third-Party Analytics Marketing",
+      "count": 413,
+      "percentage": 25.93
+    },
+    {
+      "name": "Audience Measurement",
+      "count": 412,
+      "percentage": 25.86
+    },
+    {
+      "name": "Ad Fraud",
+      "count": 180,
+      "percentage": 11.3
+    },
+    {
+      "name": "Embedded Content",
+      "count": 151,
+      "percentage": 9.48
+    },
+    {
+      "name": "Content Delivery",
+      "count": 142,
+      "percentage": 8.91
+    },
+    {
+      "name": "Action Pixels",
+      "count": 129,
+      "percentage": 8.1
+    },
+    {
+      "name": "Online Payment",
+      "count": 53,
+      "percentage": 3.33
+    },
+    {
+      "name": "Social - Share",
+      "count": 49,
+      "percentage": 3.08
+    },
+    {
+      "name": "Federated Login",
+      "count": 47,
+      "percentage": 2.95
+    },
+    {
+      "name": "Social Network",
+      "count": 45,
+      "percentage": 2.82
+    },
+    {
+      "name": "Social - Comment",
+      "count": 33,
+      "percentage": 2.07
+    },
+    {
+      "name": "Badge",
+      "count": 31,
+      "percentage": 1.95
+    },
+    {
+      "name": "Session Replay",
+      "count": 24,
+      "percentage": 1.51
+    },
+    {
+      "name": "Tag Manager",
+      "count": 19,
+      "percentage": 1.19
+    },
+    {
+      "name": "SSO",
+      "count": 17,
+      "percentage": 1.07
+    },
+    {
+      "name": "Obscure Ownership",
+      "count": 4,
+      "percentage": 0.25
+    },
+    {
+      "name": "Unknown High Risk Behavior",
+      "count": 3,
+      "percentage": 0.19
+    }
+  ],
+  "analysisByCategory": {
+    "News": {
+      "siteCount": 29,
+      "totalTrackerInstances": 1593,
+      "averageTrackersPerSite": 54.93,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 3.45
+        },
+        {
+          "name": {
+            "name": "Google LLC",
+            "displayName": "Google",
+            "privacyPolicy": "https://policies.google.com/privacy?hl=en&gl=us",
+            "url": "http://www.google.com/"
+          },
+          "count": 1,
+          "percentage": 3.45
+        },
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 3.45
+        },
+        {
+          "name": {
+            "name": "Ad Lightning, Inc.",
+            "displayName": "Ad Lightning",
+            "privacyPolicy": "https://www.adlightning.com/privacy"
+          },
+          "count": 1,
+          "percentage": 3.45
+        },
+        {
+          "name": {
+            "name": "Didomi",
+            "displayName": "Didomi"
+          },
+          "count": 1,
+          "percentage": 3.45
+        }
+      ]
+    }
+  },
+  "analysisByCountry": {
+    "CA": {
+      "siteCount": 10,
+      "totalTrackerInstances": 720,
+      "averageTrackersPerSite": 72,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 10
+        },
+        {
+          "name": {
+            "name": "Google LLC",
+            "displayName": "Google",
+            "privacyPolicy": "https://policies.google.com/privacy?hl=en&gl=us",
+            "url": "http://www.google.com/"
+          },
+          "count": 1,
+          "percentage": 10
+        },
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 10
+        },
+        {
+          "name": {
+            "name": "Ad Lightning, Inc.",
+            "displayName": "Ad Lightning",
+            "privacyPolicy": "https://www.adlightning.com/privacy"
+          },
+          "count": 1,
+          "percentage": 10
+        },
+        {
+          "name": {
+            "name": "Didomi",
+            "displayName": "Didomi"
+          },
+          "count": 1,
+          "percentage": 10
+        }
+      ]
+    },
+    "US": {
+      "siteCount": 6,
+      "totalTrackerInstances": 388,
+      "averageTrackersPerSite": 64.67,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Five Media Marketing Limited",
+            "displayName": "Five Media"
+          },
+          "count": 1,
+          "percentage": 16.67
+        },
+        {
+          "name": {
+            "name": "Datadog, Inc.",
+            "displayName": "Datadog"
+          },
+          "count": 1,
+          "percentage": 16.67
+        },
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 16.67
+        },
+        {
+          "name": {
+            "name": "Amazon Technologies, Inc.",
+            "displayName": "Amazon.com",
+            "privacyPolicy": "https://www.amazon.com/gp/help/customer/display.html?nodeId=468496",
+            "url": "http://www.amazon.com/"
+          },
+          "count": 1,
+          "percentage": 16.67
+        },
+        {
+          "name": {
+            "name": "Media.net Advertising FZ-LLC",
+            "displayName": "Media.net Advertising",
+            "privacyPolicy": "https://www.media.net/en/privacy-policy"
+          },
+          "count": 1,
+          "percentage": 16.67
+        }
+      ]
+    },
+    "GB": {
+      "siteCount": 2,
+      "totalTrackerInstances": 35,
+      "averageTrackersPerSite": 17.5,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Optimizely, Inc.",
+            "displayName": "Optimizely",
+            "privacyPolicy": "https://www.optimizely.com/privacy/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Piano Software",
+            "displayName": "Piano Software",
+            "privacyPolicy": "https://piano.io/privacy-policy/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "The Ozone Project",
+            "displayName": "The Ozone Project"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Chartbeat",
+            "displayName": "Chartbeat",
+            "privacyPolicy": "https://chartbeat.com/privacy/",
+            "url": "http://chartbeat.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        }
+      ]
+    },
+    "AU": {
+      "siteCount": 2,
+      "totalTrackerInstances": 76,
+      "averageTrackersPerSite": 38,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Tealium Inc.",
+            "displayName": "Tealium",
+            "privacyPolicy": "https://tealium.com/privacy/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Chartbeat",
+            "displayName": "Chartbeat",
+            "privacyPolicy": "https://chartbeat.com/privacy/",
+            "url": "http://chartbeat.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Chartbeat",
+            "displayName": "Chartbeat",
+            "privacyPolicy": "https://chartbeat.com/privacy/",
+            "url": "http://chartbeat.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Chartbeat",
+            "displayName": "Chartbeat",
+            "privacyPolicy": "https://chartbeat.com/privacy/",
+            "url": "http://chartbeat.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        }
+      ]
+    },
+    "DE": {
+      "siteCount": 2,
+      "totalTrackerInstances": 5,
+      "averageTrackersPerSite": 2.5,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "AB Tasty",
+            "displayName": "AB Tasty"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "AB Tasty",
+            "displayName": "AB Tasty"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Google LLC",
+            "displayName": "Google",
+            "privacyPolicy": "https://policies.google.com/privacy?hl=en&gl=us",
+            "url": "http://www.google.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "AB Tasty",
+            "displayName": "AB Tasty"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Adobe Inc.",
+            "displayName": "Adobe",
+            "privacyPolicy": "https://www.adobe.com/privacy/marketing-cloud.html",
+            "url": "http://www.tubemogul.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        }
+      ]
+    },
+    "FR": {
+      "siteCount": 2,
+      "totalTrackerInstances": 11,
+      "averageTrackersPerSite": 5.5,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Amplitude",
+            "displayName": "Amplitude",
+            "privacyPolicy": "https://amplitude.com/privacy"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Integral Ad Science, Inc.",
+            "displayName": "Integral Ad Science",
+            "privacyPolicy": "https://integralads.com/privacy-policy/",
+            "url": "http://adsafemedia.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Taboola, Inc.",
+            "displayName": "Taboola"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Amazon Technologies, Inc.",
+            "displayName": "Amazon.com",
+            "privacyPolicy": "https://www.amazon.com/gp/help/customer/display.html?nodeId=468496",
+            "url": "http://www.amazon.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        }
+      ]
+    },
+    "IN": {
+      "siteCount": 2,
+      "totalTrackerInstances": 121,
+      "averageTrackersPerSite": 60.5,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Amazon Technologies, Inc.",
+            "displayName": "Amazon.com",
+            "privacyPolicy": "https://www.amazon.com/gp/help/customer/display.html?nodeId=468496",
+            "url": "http://www.amazon.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Amazon Technologies, Inc.",
+            "displayName": "Amazon.com",
+            "privacyPolicy": "https://www.amazon.com/gp/help/customer/display.html?nodeId=468496",
+            "url": "http://www.amazon.com/"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "comScore, Inc",
+            "displayName": "comScore",
+            "privacyPolicy": "https://www.comscore.com/About/Privacy-Policy"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Audigent",
+            "displayName": "Audigent"
+          },
+          "count": 1,
+          "percentage": 50
+        }
+      ]
+    },
+    "JP": {
+      "siteCount": 2,
+      "totalTrackerInstances": 138,
+      "averageTrackersPerSite": 69,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Google Ads",
+            "displayName": "Google Ads (Google)",
+            "localizedName": "Google Ads",
+            "ownedBy": "Google LLC"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Twitter, Inc.",
+            "displayName": "Twitter",
+            "privacyPolicy": "https://twitter.com/en/privacy",
+            "url": "https://twitter.com"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Taboola, Inc.",
+            "displayName": "Taboola"
+          },
+          "count": 1,
+          "percentage": 50
+        },
+        {
+          "name": {
+            "name": "Piano Software",
+            "displayName": "Piano Software",
+            "privacyPolicy": "https://piano.io/privacy-policy/"
+          },
+          "count": 1,
+          "percentage": 50
+        }
+      ]
+    },
+    "QA": {
+      "siteCount": 1,
+      "totalTrackerInstances": 99,
+      "averageTrackersPerSite": 99,
+      "topTrackerOwners": [
+        {
+          "name": {
+            "name": "Chartbeat",
+            "displayName": "Chartbeat",
+            "privacyPolicy": "https://chartbeat.com/privacy/",
+            "url": "http://chartbeat.com/"
+          },
+          "count": 1,
+          "percentage": 100
+        },
+        {
+          "name": {
+            "name": "Publisher First, Inc. dba Freestar",
+            "displayName": "Freestar"
+          },
+          "count": 1,
+          "percentage": 100
+        },
+        {
+          "name": {
+            "name": "OneSignal",
+            "displayName": "OneSignal",
+            "privacyPolicy": "https://onesignal.com/privacy_policy"
+          },
+          "count": 1,
+          "percentage": 100
+        },
+        {
+          "name": {
+            "name": "Amplitude",
+            "displayName": "Amplitude",
+            "privacyPolicy": "https://amplitude.com/privacy"
+          },
+          "count": 1,
+          "percentage": 100
+        },
+        {
+          "name": {
+            "name": "Chartbeat",
+            "displayName": "Chartbeat",
+            "privacyPolicy": "https://chartbeat.com/privacy/",
+            "url": "http://chartbeat.com/"
+          },
+          "count": 1,
+          "percentage": 100
+        }
+      ]
+    }
+  }
+}
