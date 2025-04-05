@@ -51,7 +51,7 @@ This data allows for analysis of tracking prevalence, identification of specific
 
     This pulls down the latest tracker list from github.
 
-5.  **Prepare Domains JSON:** Create a JSON file (e.g., `domains.json` in the project root) containing an array of objects, where each object represents a website to scan.
+5.  **Prepare Domains JSON:** Create a JSON file (e.g., `domains.json` in the project root) containing an array of objects, where each object represents a website to scan. You can `cp example.domains.json domains.json` to get started quickly.
 
     _Example `domains.json`:_
 
@@ -78,7 +78,7 @@ This data allows for analysis of tracking prevalence, identification of specific
         "language": "mul"
       },
       {
-        "url": "developer.mozilla.org", // Scheme (https://) will be added automatically
+        "url": "developer.mozilla.org",
         "owner": {
           "name": "Mozilla Corporation",
           "displayName": "MDN",
