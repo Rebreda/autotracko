@@ -6,16 +6,25 @@ import { Command } from "commander";
 // Import refactored modules & types
 import { loadAndPrepareTrackerData, PreparedTrackerData } from "./tracker";
 import { scanWebsite } from "./scanner";
-import { ScanResult, DomainInputEntry, DomainCacheEntry } from "./types"; // Import updated types
+// Import necessary types
+import {
+  ScanResult,
+  DomainInputEntry,
+  DomainCacheEntry,
+  FinalOutput, // Import the final structure type
+} from "./types";
+// Import the normalization function
 import {
   readCacheFromFile,
   writeCacheToFile,
   checkDomainProcessed,
   updateOrAddCacheEntry,
 } from "./cache";
+import { normalizeResults } from "./utils/normalizeResults";
 
 // Define paths relative to the script location or CWD
-const DEFAULT_DOMAINS_FILE = "domains.json"; // <--- Changed default
+const DEFAULT_DOMAINS_FILE = "domains.json";
+// DEFAULT_OUTPUT_FILE now refers to the FINAL NORMALIZED results file
 const DEFAULT_OUTPUT_FILE = "results.json";
 const DEFAULT_CACHE_FILE = "cache.json";
 const DEFAULT_TRACKER_FILE = path.join(
@@ -38,18 +47,18 @@ const getHostnameSafe = (url: string): string | null => {
 const program = new Command();
 
 program
-  .name("autotracko") // <--- Updated name
+  .name("autotracko")
   .description(
-    "Scans websites for third-party trackers using DuckDuckGo TDS data"
+    "Scans websites for third-party trackers and saves normalized results." // Updated description
   )
   .option(
     "-d, --domains <path>",
-    "JSON file with list of domain objects to scan", // <--- Updated description
-    DEFAULT_DOMAINS_FILE // <--- Updated default
+    "JSON file with list of domain objects to scan",
+    DEFAULT_DOMAINS_FILE
   )
   .option(
     "-o, --output <path>",
-    "Output JSON file for scan results",
+    "Output JSON file for final normalized scan results", // Updated description
     DEFAULT_OUTPUT_FILE
   )
   .option(
@@ -71,6 +80,7 @@ program
   .action(async (options) => {
     // --- Path Resolution ---
     const domainsFilePath = path.resolve(process.cwd(), options.domains);
+    // resultsFilePath now points to the final, normalized output file
     const resultsFilePath = path.resolve(process.cwd(), options.output);
     const cacheEnabled = options.cache !== false;
     const cacheFilePath = cacheEnabled
@@ -79,9 +89,9 @@ program
     const trackerListFilePath = path.resolve(options.trackerList);
 
     // --- Logging Setup ---
-    console.log("Starting Autotracko scan process..."); // <--- Updated name
+    console.log("Starting Autotracko scan and normalization process..."); // Updated log
     console.log(`Domains file: ${domainsFilePath}`);
-    console.log(`Results file: ${resultsFilePath}`);
+    console.log(`Final results file: ${resultsFilePath}`); // Updated log
     if (cacheEnabled) {
       console.log(`Cache file: ${cacheFilePath} (Cache enabled)`);
     } else {
@@ -121,44 +131,33 @@ program
       domainInputs = parsedData.filter(
         (entry: any): entry is DomainInputEntry => {
           if (typeof entry?.url !== "string" || !entry.url) {
-            console.warn(
-              "Skipping entry with missing or invalid 'url':",
-              JSON.stringify(entry)
-            );
+            console.warn("Skipping entry with missing/invalid 'url'.");
             return false;
           }
-          // Ensure URL validity and add scheme if missing
           try {
             let urlToValidate = entry.url;
-            if (
-              !urlToValidate.startsWith("http://") &&
-              !urlToValidate.startsWith("https://")
-            ) {
-              urlToValidate = `https://${urlToValidate}`; // Default to https
+            if (!urlToValidate.startsWith("http")) {
+              urlToValidate = `https://${urlToValidate}`;
             }
-            new URL(urlToValidate); // Validate
-            entry.url = urlToValidate; // Update entry with potentially prefixed URL
+            new URL(urlToValidate);
+            entry.url = urlToValidate;
             return true;
           } catch {
-            console.warn(
-              `Skipping entry with invalid URL format: ${entry.url}`
-            );
+            console.warn(`Skipping invalid URL: ${entry.url}`);
             return false;
           }
         }
       );
 
       if (domainInputs.length === 0) {
-        throw new Error(
-          "No valid domain entries found in the domains JSON file."
-        );
+        throw new Error("No valid domain entries found.");
       }
       console.log(
         `Loaded ${domainInputs.length} valid domain entries to scan.`
       );
     } catch (err: any) {
       console.error(
-        `Error loading or parsing domains from ${domainsFilePath}: ${err.message}`
+        `Error loading domains from ${domainsFilePath}: ${err.message}`
       );
       process.exit(1);
     }
@@ -171,24 +170,12 @@ program
       console.log(`Loaded ${currentCache.length} entries from cache.`);
     }
 
-    // 4. Load Initial Results
-    let results: ScanResult[] = [];
-    try {
-      if (fs.existsSync(resultsFilePath)) {
-        const rawResults = fs.readFileSync(resultsFilePath, "utf-8");
-        if (rawResults.trim()) {
-          results = JSON.parse(rawResults) as ScanResult[];
-          console.log(
-            `Loaded ${results.length} previous results from ${resultsFilePath}.`
-          );
-        }
-      }
-    } catch (err: any) {
-      console.error(
-        `Error loading previous results from ${resultsFilePath}: ${err.message}. Starting fresh results.`
-      );
-      results = [];
-    }
+    // 4. Initialize Intermediate Results Array
+    // This will hold ScanResult objects before normalization
+    let intermediateResults: ScanResult[] = [];
+
+    // --- REMOVED initial loading of results file ---
+    // We will generate the normalized file fresh.
 
     // 5. Process Domains
     let processedCount = 0;
@@ -197,11 +184,10 @@ program
 
     // Iterate through the input objects
     for (const domainInput of domainInputs) {
-      const url = domainInput.url; // Get URL from the input object
+      const url = domainInput.url;
       const domainName = getHostnameSafe(url);
 
       if (!domainName) {
-        // This should ideally not happen due to earlier validation, but check anyway
         console.warn(
           `Could not extract domain from validated URL: ${url}. Skipping.`
         );
@@ -209,63 +195,60 @@ program
         continue;
       }
 
-      // Extract metadata (excluding URL) to potentially add to results
       const { url: _url, ...domainMetadata } = domainInput;
 
-      // Check cache (if enabled)
       if (cacheEnabled && checkDomainProcessed(domainName, currentCache)) {
-        console.log(
-          `Skipping ${url} (marked as successfully processed in cache)`
-        );
+        console.log(`Skipping ${url} (cached)`);
         skippedCount++;
         continue;
       }
 
-      console.log(`Scanning ${url}...`);
-      let scanResultData: Omit<ScanResult, "domainMetadata"> | null = null; // Base scan result without metadata yet
+      console.log(
+        `Scanning ${url} [${processedCount + skippedCount + errorCount + 1}/${
+          domainInputs.length
+        }]...`
+      );
+      let scanResultData: Omit<ScanResult, "domainMetadata"> | null = null;
       let success = false;
       let scanError: string | undefined = undefined;
 
       try {
-        let headlessValue =
-          options.headless.toLowerCase() === "false" ? false : true;
+        let headlessValue = options.headless.toLowerCase() !== "false";
 
-        // Execute the scan - scanWebsite returns the base ScanResult structure
+        // Execute scan - returns intermediate ScanResult
         scanResultData = await scanWebsite(url, preparedTrackerData, {
-          launchOptions: {
-            headless: headlessValue,
-          },
+          launchOptions: { headless: headlessValue },
         });
 
         if (scanResultData.error) {
           console.warn(
-            `Scan for ${url} completed with internal error: ${scanResultData.error}`
+            `Scan for ${url} completed with error: ${scanResultData.error}`
           );
           scanError = scanResultData.error;
           success = false;
           errorCount++;
         } else {
           console.log(
-            `Finished scanning ${url}. Found ${scanResultData.trackers.length} trackers.`
+            `Finished ${url}. Found ${scanResultData.trackers.length} trackers.`
           );
           success = true;
           processedCount++;
         }
 
-        // Combine scan data with input metadata for the final result entry
-        const finalResult: ScanResult = {
+        // Combine scan data with metadata for the intermediate result
+        const intermediateResult: ScanResult = {
           ...scanResultData,
           domainMetadata:
-            Object.keys(domainMetadata).length > 0 ? domainMetadata : undefined, // Add metadata if it exists
+            Object.keys(domainMetadata).length > 0 ? domainMetadata : undefined,
         };
-        results.push(finalResult);
+        intermediateResults.push(intermediateResult); // Add to intermediate array
       } catch (err: any) {
         console.error(`Critical error processing ${url}: ${err.message}`);
         scanError = err.message;
         success = false;
         errorCount++;
-        // Optionally add a partial result with metadata
-        const errorResult: ScanResult = {
+        // Add a partial error result to intermediate array
+        intermediateResults.push({
           requestedUrl: url,
           finalUrl: url,
           domain: domainName,
@@ -277,8 +260,7 @@ program
           error: err.message,
           domainMetadata:
             Object.keys(domainMetadata).length > 0 ? domainMetadata : undefined,
-        };
-        results.push(errorResult);
+        });
       }
 
       // Update cache (if enabled)
@@ -290,36 +272,78 @@ program
           error: scanError,
         };
         currentCache = updateOrAddCacheEntry(cacheEntry, currentCache);
+        // Consider moving cache writing outside the loop for efficiency,
+        // but writing incrementally provides better fault tolerance.
         writeCacheToFile(currentCache, cacheFilePath);
       }
 
-      // Write intermediate results (Impure)
+      // --- REMOVED writing intermediate results inside the loop ---
+    } // --- End of domain loop ---
+
+    // 6. Normalize Results AFTER the loop
+    console.log("\nAll scans attempted. Normalizing results...");
+    let finalOutput: FinalOutput;
+    try {
+      // Pass the path where the final output will be saved for metadata
+      finalOutput = normalizeResults(intermediateResults, resultsFilePath);
+      console.log(
+        `Normalization complete. Found ${
+          Object.keys(finalOutput.allTrackers).length
+        } unique trackers across ${finalOutput.scanResults.length} results.`
+      );
+    } catch (normErr: any) {
+      console.error(`Failed to normalize results: ${normErr.message}`);
+      // Decide how to handle this - maybe save intermediate results?
+      console.error(
+        "Saving intermediate results instead due to normalization error."
+      );
       try {
         fs.writeFileSync(
-          resultsFilePath,
-          JSON.stringify(results, null, 2),
+          resultsFilePath.replace(".json", ".intermediate.json"), // Save intermediate separately
+          JSON.stringify(intermediateResults, null, 2),
           "utf-8"
         );
       } catch (writeErr: any) {
         console.error(
-          `Failed to write intermediate results to ${resultsFilePath}: ${writeErr.message}`
+          `Failed to write intermediate results after normalization error: ${writeErr.message}`
         );
       }
-    } // End of domain loop
+      process.exit(1); // Exit if normalization failed
+    }
 
-    // 6. Final Summary
-    console.log("\n--- Scan Complete ---");
+    // 7. Write FINAL Normalized Results (Once)
+    try {
+      console.log(`Saving final normalized results to ${resultsFilePath}...`);
+      fs.writeFileSync(
+        resultsFilePath,
+        JSON.stringify(finalOutput, null, 2), // Save the final normalized object
+        "utf-8"
+      );
+      console.log(`Final results successfully saved to ${resultsFilePath}.`);
+    } catch (writeErr: any) {
+      console.error(
+        `Failed to write final results to ${resultsFilePath}: ${writeErr.message}`
+      );
+    }
+
+    // 8. Final Summary
+    console.log("\n--- Scan and Normalization Complete ---"); // Updated log
     console.log(`Total entries in input file: ${domainInputs.length}`);
-    console.log(`Successfully processed: ${processedCount}`);
+    console.log(`Successfully processed scans: ${processedCount}`);
     console.log(`Skipped (cached or invalid): ${skippedCount}`);
-    console.log(`Errors during processing: ${errorCount}`);
-    console.log(`Total results saved: ${results.length}`);
-    console.log(`Results saved to ${resultsFilePath}`);
+    console.log(`Errors during scanning: ${errorCount}`);
+    console.log(
+      `Total results processed for normalization: ${intermediateResults.length}`
+    );
+    console.log(`Final normalized results saved to ${resultsFilePath}`); // Updated log
     if (cacheEnabled) {
       console.log(`Cache saved to ${cacheFilePath}`);
     } else {
       console.log("Caching was disabled.");
     }
+    console.log(
+      "\nRun the analytics command separately on the results.json file if needed."
+    );
   });
 
 // Execute the command line parser

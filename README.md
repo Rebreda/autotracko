@@ -106,28 +106,28 @@ Run the scanner using Node.js (via `ts-node` for development or after building w
 
 ```bash
 # Using ts-node (for development)
-npx ts-node src/index.ts --domains domains.txt --output results.json
+npx ts-node src/index.ts --domains domains.json --output results.json
 ```
 
 ### After building (npm run build)
 
-`node dist/index.js --domains domains.txt --output results.json`
+`node dist/index.js --domains domains.json --output results.json`
 
 Using npm/yarn script:
 
-### Ensure domains.txt exists
+### Ensure domains.json exists
 
-`npm run scan -- --domains domains.txt --output results.json`
+`npm run scan -- --domains domains.json --output results.json`
 
 ### or
 
-`yarn scan --domains domains.txt --output results.json`
+`yarn scan --domains domains.json --output results.json`
 
 (Note the extra -- when passing arguments via npm run)
 
 Command-Line Options:
 
-    -d, --domains <path>: Path to the text file containing URLs to scan (default: domains.txt).
+    -d, --domains <path>: Path to the text file containing URLs to scan (default: domains.json).
     -o, --output <path>: Path to the output JSON file for results (default: results.json).
     -c, --cache <path>: Path to the cache file (default: cache.json). Caching is enabled by default.
     --no-cache: Disables reading from or writing to the cache file.

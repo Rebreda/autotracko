@@ -1,89 +1,117 @@
 import { LaunchOptions } from "puppeteer";
 
-/**
- * Represents the owner of a domain being scanned.
- */
+// --- Input & Metadata Types ---
+
 export interface DomainOwnerInfo {
-  name: string; // e.g., "Wikimedia Foundation"
-  displayName?: string; // e.g.,"Wikipedia"
-  country?: string; // e.g., "CA", "US", "Global"
-  // Add other relevant owner details if needed
+  name: string;
+  displayName?: string;
+  country?: string;
 }
 
-/**
- * Represents a single entry in the domains.json input file.
- */
 export interface DomainInputEntry {
-  url: string; // The primary URL to scan (mandatory)
-  owner?: DomainOwnerInfo; // Optional owner information
-  category?: string; // e.g., "News", "Reference", "Technology"
-  language?: string; // e.g., "en", "fr"
-  // Add other relevant metadata as needed
+  url: string;
+  owner?: DomainOwnerInfo;
+  category?: string;
+  language?: string;
 }
 
-/**
- * Defines the structure for details about a specific tracker domain.
- */
+// --- Tracker Definition Types ---
+
 export interface TrackerInfo {
   owner: string;
   prevalence: number;
-  // Example additional fields (add actual fields from your data)
   fingerprinting?: number;
   cookies?: number;
-  rules?: any[]; // Define more specific type if possible
-  default?: string; // e.g., "block"
-  // Allow other potential properties from the source JSON
+  rules?: any[]; // This may exist in the source list but is removed before final storage
+  default?: string;
+  categories?: string[]; // Ensure this is used by analytics
   [key: string]: any;
 }
 
-/**
- * Defines the structure for the overall tracker list data.
- */
 export interface TrackerList {
   trackers: { [domain: string]: TrackerInfo };
-  // Allow other top-level properties from the source JSON (e.g., entities, cnames)
   [key: string]: any;
 }
 
-// --- Configuration Interfaces ---
+// --- Scanner Configuration ---
+
 interface ScreenshotOptions {
   enabled: boolean;
-  directory?: string; // Defaults to ../screenshots relative to this file
-  fullPage?: boolean; // Defaults to true
+  directory?: string;
+  fullPage?: boolean;
 }
+
 export interface ScannerConfig {
   userAgent?: string;
   viewport?: { width: number; height: number };
-  navigationTimeout?: number; // milliseconds
+  navigationTimeout?: number;
   waitUntil?: "load" | "domcontentloaded" | "networkidle0" | "networkidle2";
   screenshotOptions?: ScreenshotOptions;
-  launchOptions?: LaunchOptions; // Allow passing puppeteer launch options
+  launchOptions?: LaunchOptions;
 }
-// --- Result Interfaces ---
+
+// --- Intermediate Scan Result (Output of scanner.ts) ---
 
 export interface ScanResult {
   requestedUrl: string;
-  finalUrl: string; // The URL after redirects
+  finalUrl: string;
   domain: string;
   timestamp: string;
   screenshotPath: string | null;
-  totalSize: number; // in bytes (approximate)
+  totalSize: number;
   resourceUrls: string[];
-  trackers: { domain: string; info: TrackerInfo }[];
-  error?: string; // Optional error message if scan failed partially or fully
-  domainMetadata?: Omit<DomainInputEntry, "url">; // Include metadata from input, excluding the URL itself
+  // Trackers identified, info excludes 'rules'
+  trackers: { domain: string; info: Omit<TrackerInfo, "rules"> }[];
+  error?: string;
+  domainMetadata?: Omit<DomainInputEntry, "url">;
 }
 
+// --- Data Collection Helper Type ---
 export interface CollectedData {
   finalUrl: string;
   resourceUrls: string[];
   totalSize: number;
   screenshotPath: string | null;
-  error?: string; // Error during collection
+  error?: string;
 }
+
+// --- Final Normalized Output Structure (results.json) ---
+
+// Map of unique tracker domains to their info (rules excluded)
+export interface NormalizedTrackerInfoMap {
+  [trackerDomain: string]: Omit<TrackerInfo, "rules">;
+}
+
+// Represents a scan result with tracker references instead of embedded info
+export interface NormalizedScanResult {
+  requestedUrl: string;
+  finalUrl: string;
+  domain: string;
+  timestamp: string;
+  screenshotPath: string | null;
+  totalSize: number;
+  // resourceUrls: string[]; // Optional: Keep if needed, remove to save more space
+  trackerDomains: string[]; // References to keys in NormalizedTrackerInfoMap
+  error?: string;
+  domainMetadata?: Omit<DomainInputEntry, "url">;
+}
+
+// The final structure written to results.json
+export interface FinalOutput {
+  generationTimestamp: string; // Add timestamp for the results file itself
+  sourceFile?: string; // Optional: name of the original intermediate file
+  allTrackers: NormalizedTrackerInfoMap;
+  scanResults: NormalizedScanResult[];
+}
+
+// --- Analytics Output Structure ---
+// (Keep the existing AnalyticsOutput structure from analytics.ts,
+//  it describes the output of the analytics process, not the scan results file)
+
+// --- Misc Types ---
 export interface DomainCacheEntry {
   domain: string;
   lastChecked: string;
   success: boolean;
-  error?: string; // Optional: Store error message on failure
+  error?: string;
 }
