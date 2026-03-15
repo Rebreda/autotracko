@@ -285,9 +285,23 @@ program
           error: scanError,
         };
         currentCache = updateOrAddCacheEntry(cacheEntry, currentCache);
-        // Consider moving cache writing outside the loop for efficiency,
-        // but writing incrementally provides better fault tolerance.
         writeCacheToFile(currentCache, cacheFilePath);
+      }
+
+      // Write results incrementally so progress is preserved on interruption
+      try {
+        const partialOutput = normalizeResults(siteResults, resultsFilePath, {
+          includeAllTrackers: options.trackerCatalog !== false,
+          stripRules: true,
+        });
+        fs.mkdirSync(path.dirname(resultsFilePath), { recursive: true });
+        fs.writeFileSync(
+          resultsFilePath,
+          JSON.stringify(partialOutput, null, 2),
+          "utf-8"
+        );
+      } catch {
+        // Non-fatal: final write at end of run will still attempt
       }
 
     }
