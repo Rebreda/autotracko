@@ -45,4 +45,4 @@ results*.json
 analytics*.json
 
 
-data/
+src/data/

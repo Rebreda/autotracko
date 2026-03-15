@@ -25,7 +25,12 @@ import { normalizeResults } from "./utils/normalizeResults";
 // Define paths relative to the script location or CWD
 const DEFAULT_DOMAINS_FILE = "domains.json";
 const DEFAULT_RESULTS_DIR = "results";
-const DEFAULT_OUTPUT_FILE = path.join(DEFAULT_RESULTS_DIR, "results.json");
+const RUN_ID = new Date()
+  .toISOString()
+  .slice(0, 19)
+  .replace("T", "_")
+  .replace(/:/g, "-");
+const DEFAULT_OUTPUT_FILE = path.join(DEFAULT_RESULTS_DIR, RUN_ID, "results.json");
 const DEFAULT_CACHE_FILE = path.join(DEFAULT_RESULTS_DIR, "cache.json");
 const DEFAULT_TRACKER_FILE = path.join(
   __dirname,
