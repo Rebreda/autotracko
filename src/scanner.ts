@@ -1,11 +1,15 @@
 import puppeteer, { Browser, Page, HTTPResponse } from "puppeteer";
-import { findTrackerInfo, PreparedTrackerData, TrackerInfo } from "./tracker"; // Import functional parts
+import { findTrackerInfo, PreparedTrackerData } from "./tracker";
 import { URL } from "url";
 import fs from "fs";
 import path from "path";
-import { ScannerConfig, CollectedData, ScanResult } from "./types";
-
-// --- Default Configuration ---
+import crypto from "crypto";
+import {
+  ScannerConfig,
+  CollectedData,
+  SiteResult,
+  NormalizedTrackerInfoMap,
+} from "./types";
 
 const DEFAULT_CONFIG: Required<ScannerConfig> = {
   userAgent:
@@ -15,15 +19,13 @@ const DEFAULT_CONFIG: Required<ScannerConfig> = {
   waitUntil: "networkidle2",
   screenshotOptions: {
     enabled: true,
-    directory: path.join(__dirname, "..", "screenshots"),
+    directory: path.join(process.cwd(), "results", "screenshots"),
     fullPage: true,
   },
   launchOptions: {
     headless: true, // Default to headless
   },
 };
-
-// --- Helper Functions ---
 
 /**
  * Extracts hostname safely from a URL string.
@@ -36,15 +38,12 @@ const getHostname = (url: string): string | null => {
   }
 };
 
-// --- Core Logic ---
+const getStableScreenshotFileName = (url: string): string => {
+  const hostname = getHostname(url) || "unknown-domain";
+  const digest = crypto.createHash("sha1").update(url).digest("hex").slice(0, 12);
+  return `${hostname}-${digest}.png`;
+};
 
-/**
- * (Impure Function - Browser Interaction & File System)
- * Launches Puppeteer, navigates to the URL, collects resource data, and takes a screenshot.
- * @param url The URL to scan.
- * @param config Scanner configuration options.
- * @returns Collected data or an error indication.
- */
 const collectWebsiteData = async (
   url: string,
   config: Required<ScannerConfig>
@@ -110,8 +109,7 @@ const collectWebsiteData = async (
         if (!fs.existsSync(screenshotDir)) {
           fs.mkdirSync(screenshotDir, { recursive: true });
         }
-        const domainName = getHostname(collected.finalUrl) || "unknown-domain";
-        const filename = `${domainName}-${Date.now()}.png`;
+        const filename = getStableScreenshotFileName(collected.finalUrl);
         collected.screenshotPath = path.join(screenshotDir, filename);
 
         console.debug(`Taking screenshot: ${collected.screenshotPath}`);
@@ -146,31 +144,22 @@ const collectWebsiteData = async (
   return collected;
 };
 
-/**
- * (Pure Function)
- * Identifies trackers from a list of resource URLs using prepared tracker data.
- * @param resourceUrls List of URLs collected from the website.
- * @param preparedTrackerData Prepared tracker data for lookups.
- * @returns An array of found trackers with their info.
- */
 export const identifyTrackers = (
   resourceUrls: string[],
   preparedTrackerData: PreparedTrackerData | null
-): { domain: string; info: TrackerInfo }[] => {
-  if (!preparedTrackerData) return []; // No data to check against
+): NormalizedTrackerInfoMap => {
+  if (!preparedTrackerData) return {};
 
-  const trackersFound: { domain: string; info: TrackerInfo }[] = [];
+  const trackersFound: NormalizedTrackerInfoMap = {};
   const uniqueDomains = new Set<string>();
 
   resourceUrls.forEach((resUrl) => {
     const resDomain = getHostname(resUrl);
     if (resDomain && !uniqueDomains.has(resDomain)) {
       uniqueDomains.add(resDomain);
-      // console.debug(`Checking domain: ${resDomain}`); // Less verbose logging
       const trackerInfo = findTrackerInfo(resDomain, preparedTrackerData);
       if (trackerInfo) {
-        // console.debug(`Found tracker: ${resDomain}`); // Log only found ones
-        trackersFound.push({ domain: resDomain, info: trackerInfo });
+        trackersFound[resDomain] = trackerInfo;
       }
     }
   });
@@ -178,24 +167,14 @@ export const identifyTrackers = (
   return trackersFound;
 };
 
-/**
- * Scans the provided URL by collecting data and identifying trackers.
- * Orchestrates the impure data collection and pure tracker identification.
- * @param url The URL to scan.
- * @param preparedTrackerData The prepared tracker data (required).
- * @param options Optional scanner configuration.
- * @returns A ScanResult object.
- */
 export const scanWebsite = async (
   url: string,
-  preparedTrackerData: PreparedTrackerData | null, // Inject tracker data
+  preparedTrackerData: PreparedTrackerData | null,
   options?: ScannerConfig
-): Promise<ScanResult> => {
-  // Merge user options with defaults
+): Promise<SiteResult> => {
   const config: Required<ScannerConfig> = {
     ...DEFAULT_CONFIG,
     ...options,
-    // Deep merge screenshot options if provided
     screenshotOptions: {
       ...DEFAULT_CONFIG.screenshotOptions,
       ...(options?.screenshotOptions ?? {}),
@@ -207,18 +186,9 @@ export const scanWebsite = async (
   };
 
   const startTime = new Date();
-
-  // 1. Collect data (Impure)
   const collectedData = await collectWebsiteData(url, config);
-
-  // 2. Identify trackers (Pure)
-  const trackers = identifyTrackers(
-    collectedData.resourceUrls,
-    preparedTrackerData
-  );
-
-  // 3. Construct final result
-  const result: ScanResult = {
+  const trackerDetails = identifyTrackers(collectedData.resourceUrls, preparedTrackerData);
+  const result: SiteResult = {
     requestedUrl: url,
     finalUrl: collectedData.finalUrl,
     domain: getHostname(collectedData.finalUrl) || "unknown",
@@ -226,8 +196,9 @@ export const scanWebsite = async (
     screenshotPath: collectedData.screenshotPath,
     totalSize: collectedData.totalSize,
     resourceUrls: collectedData.resourceUrls,
-    trackers: trackers,
-    error: collectedData.error, // Include error from collection phase
+    trackerDomains: Object.keys(trackerDetails),
+    trackerDetails,
+    error: collectedData.error,
   };
 
   return result;

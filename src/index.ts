@@ -8,10 +8,10 @@ import { loadAndPrepareTrackerData, PreparedTrackerData } from "./tracker";
 import { scanWebsite } from "./scanner";
 // Import necessary types
 import {
-  ScanResult,
+  SiteResult,
   DomainInputEntry,
   DomainCacheEntry,
-  FinalOutput, // Import the final structure type
+  FinalOutput,
 } from "./types";
 // Import the normalization function
 import {
@@ -24,9 +24,9 @@ import { normalizeResults } from "./utils/normalizeResults";
 
 // Define paths relative to the script location or CWD
 const DEFAULT_DOMAINS_FILE = "domains.json";
-// DEFAULT_OUTPUT_FILE now refers to the FINAL NORMALIZED results file
-const DEFAULT_OUTPUT_FILE = "results.json";
-const DEFAULT_CACHE_FILE = "cache.json";
+const DEFAULT_RESULTS_DIR = "results";
+const DEFAULT_OUTPUT_FILE = path.join(DEFAULT_RESULTS_DIR, "results.json");
+const DEFAULT_CACHE_FILE = path.join(DEFAULT_RESULTS_DIR, "cache.json");
 const DEFAULT_TRACKER_FILE = path.join(
   __dirname,
   "data",
@@ -77,6 +77,10 @@ program
     "Run browser in headless mode ('true', 'false')",
     "true"
   )
+  .option(
+    "--no-tracker-catalog",
+    "Omit allTrackers map from output to reduce file size"
+  )
   .action(async (options) => {
     // --- Path Resolution ---
     const domainsFilePath = path.resolve(process.cwd(), options.domains);
@@ -99,6 +103,11 @@ program
     }
     console.log(`Tracker list: ${trackerListFilePath}`);
     console.log(`Headless mode: ${options.headless}`);
+    console.log(
+      `Tracker catalog in output: ${
+        options.trackerCatalog !== false ? "enabled" : "disabled (--no-tracker-catalog)"
+      }`
+    );
 
     // 1. Load and Prepare Tracker Data (Once)
     console.log("Loading and preparing tracker data...");
@@ -170,14 +179,11 @@ program
       console.log(`Loaded ${currentCache.length} entries from cache.`);
     }
 
-    // 4. Initialize Intermediate Results Array
-    // This will hold ScanResult objects before normalization
-    let intermediateResults: ScanResult[] = [];
+    let siteResults: SiteResult[] = [];
 
     // --- REMOVED initial loading of results file ---
     // We will generate the normalized file fresh.
 
-    // 5. Process Domains
     let processedCount = 0;
     let skippedCount = 0;
     let errorCount = 0;
@@ -208,16 +214,19 @@ program
           domainInputs.length
         }]...`
       );
-      let scanResultData: Omit<ScanResult, "domainMetadata"> | null = null;
+      let scanResultData: SiteResult | null = null;
       let success = false;
       let scanError: string | undefined = undefined;
 
       try {
         let headlessValue = options.headless.toLowerCase() !== "false";
 
-        // Execute scan - returns intermediate ScanResult
         scanResultData = await scanWebsite(url, preparedTrackerData, {
           launchOptions: { headless: headlessValue },
+          screenshotOptions: {
+            enabled: true,
+            directory: path.join(path.dirname(resultsFilePath), "screenshots"),
+          },
         });
 
         if (scanResultData.error) {
@@ -229,26 +238,24 @@ program
           errorCount++;
         } else {
           console.log(
-            `Finished ${url}. Found ${scanResultData.trackers.length} trackers.`
+            `Finished ${url}. Found ${scanResultData.trackerDomains.length} trackers.`
           );
           success = true;
           processedCount++;
         }
 
-        // Combine scan data with metadata for the intermediate result
-        const intermediateResult: ScanResult = {
+        const siteResult: SiteResult = {
           ...scanResultData,
           domainMetadata:
             Object.keys(domainMetadata).length > 0 ? domainMetadata : undefined,
         };
-        intermediateResults.push(intermediateResult); // Add to intermediate array
+        siteResults.push(siteResult);
       } catch (err: any) {
         console.error(`Critical error processing ${url}: ${err.message}`);
         scanError = err.message;
         success = false;
         errorCount++;
-        // Add a partial error result to intermediate array
-        intermediateResults.push({
+        siteResults.push({
           requestedUrl: url,
           finalUrl: url,
           domain: domainName,
@@ -256,7 +263,8 @@ program
           screenshotPath: null,
           totalSize: 0,
           resourceUrls: [],
-          trackers: [],
+          trackerDomains: [],
+          trackerDetails: {},
           error: err.message,
           domainMetadata:
             Object.keys(domainMetadata).length > 0 ? domainMetadata : undefined,
@@ -277,43 +285,48 @@ program
         writeCacheToFile(currentCache, cacheFilePath);
       }
 
-      // --- REMOVED writing intermediate results inside the loop ---
-    } // --- End of domain loop ---
+    }
 
-    // 6. Normalize Results AFTER the loop
     console.log("\nAll scans attempted. Normalizing results...");
     let finalOutput: FinalOutput;
     try {
-      // Pass the path where the final output will be saved for metadata
-      finalOutput = normalizeResults(intermediateResults, resultsFilePath);
-      console.log(
-        `Normalization complete. Found ${
-          Object.keys(finalOutput.allTrackers).length
-        } unique trackers across ${finalOutput.scanResults.length} results.`
-      );
+      finalOutput = normalizeResults(siteResults, resultsFilePath, {
+        includeAllTrackers: options.trackerCatalog !== false,
+        stripRules: true,
+      });
+      if (finalOutput.allTrackers) {
+        console.log(
+          `Normalization complete. Found ${
+            Object.keys(finalOutput.allTrackers).length
+          } unique trackers across ${finalOutput.scanResults.length} results.`
+        );
+      } else {
+        console.log(
+          `Normalization complete in compact mode across ${finalOutput.scanResults.length} results (tracker catalog omitted).`
+        );
+      }
     } catch (normErr: any) {
       console.error(`Failed to normalize results: ${normErr.message}`);
-      // Decide how to handle this - maybe save intermediate results?
-      console.error(
-        "Saving intermediate results instead due to normalization error."
-      );
+      console.error("Saving collected site results instead due to normalization error.");
       try {
+        fs.mkdirSync(path.dirname(resultsFilePath), { recursive: true });
         fs.writeFileSync(
           resultsFilePath.replace(".json", ".intermediate.json"), // Save intermediate separately
-          JSON.stringify(intermediateResults, null, 2),
+          JSON.stringify(siteResults, null, 2),
           "utf-8"
         );
       } catch (writeErr: any) {
         console.error(
-          `Failed to write intermediate results after normalization error: ${writeErr.message}`
+          `Failed to write collected site results after normalization error: ${writeErr.message}`
         );
       }
-      process.exit(1); // Exit if normalization failed
+      process.exit(1);
     }
 
     // 7. Write FINAL Normalized Results (Once)
     try {
       console.log(`Saving final normalized results to ${resultsFilePath}...`);
+      fs.mkdirSync(path.dirname(resultsFilePath), { recursive: true });
       fs.writeFileSync(
         resultsFilePath,
         JSON.stringify(finalOutput, null, 2), // Save the final normalized object
@@ -326,16 +339,13 @@ program
       );
     }
 
-    // 8. Final Summary
-    console.log("\n--- Scan and Normalization Complete ---"); // Updated log
+    console.log("\n--- Scan and Normalization Complete ---");
     console.log(`Total entries in input file: ${domainInputs.length}`);
     console.log(`Successfully processed scans: ${processedCount}`);
     console.log(`Skipped (cached or invalid): ${skippedCount}`);
     console.log(`Errors during scanning: ${errorCount}`);
-    console.log(
-      `Total results processed for normalization: ${intermediateResults.length}`
-    );
-    console.log(`Final normalized results saved to ${resultsFilePath}`); // Updated log
+    console.log(`Total results processed for normalization: ${siteResults.length}`);
+    console.log(`Final normalized results saved to ${resultsFilePath}`);
     if (cacheEnabled) {
       console.log(`Cache saved to ${cacheFilePath}`);
     } else {

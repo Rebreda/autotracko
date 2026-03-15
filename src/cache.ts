@@ -3,10 +3,7 @@ import path from "path";
 import { DomainCacheEntry } from "./types";
 
 /**
- * Finds a cache entry for a specific domain within the cache array. (Pure)
- * @param domain The domain to find.
- * @param cache The array of cache entries.
- * @returns The found entry or undefined.
+ * Finds a cache entry for a specific domain within the cache array.
  */
 export const findCacheEntry = (
   domain: string,
@@ -16,10 +13,7 @@ export const findCacheEntry = (
 };
 
 /**
- * Checks if a domain has been successfully processed based on the cache. (Pure)
- * @param domain The domain to check.
- * @param cache The array of cache entries.
- * @returns True if the domain exists in the cache and was successful, false otherwise.
+ * Checks if a domain has been successfully processed based on the cache.
  */
 export const checkDomainProcessed = (
   domain: string,
@@ -30,10 +24,7 @@ export const checkDomainProcessed = (
 };
 
 /**
- * Creates a new cache array with an entry added or updated. (Pure, Immutable)
- * @param entry The DomainCacheEntry to add or update.
- * @param cache The current array of cache entries.
- * @returns A new array with the entry added or updated.
+ * Creates a new cache array with an entry added or updated.
  */
 export const updateOrAddCacheEntry = (
   entry: DomainCacheEntry,
@@ -53,14 +44,10 @@ export const updateOrAddCacheEntry = (
   }
 };
 
-// --- Impure Cache I/O Functions ---
-
 const DEFAULT_CACHE_FILE_PATH = path.join(__dirname, "..", "cache.json");
 
 /**
- * Reads the cache data from a JSON file. (Impure - File I/O)
- * @param filePath The path to the cache file. Defaults to cache.json in parent dir.
- * @returns An array of DomainCacheEntry, or an empty array if file doesn't exist or parsing fails.
+ * Reads the cache data from a JSON file.
  */
 export const readCacheFromFile = (
   filePath: string = DEFAULT_CACHE_FILE_PATH
@@ -95,10 +82,7 @@ export const readCacheFromFile = (
 };
 
 /**
- * Writes the cache data to a JSON file. (Impure - File I/O)
- * @param cache The array of DomainCacheEntry to save.
- * @param filePath The path to the cache file. Defaults to cache.json in parent dir.
- * @returns True if successful, false otherwise.
+ * Writes the cache data to a JSON file.
  */
 export const writeCacheToFile = (
   cache: readonly DomainCacheEntry[],

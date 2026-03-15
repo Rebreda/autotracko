@@ -5,11 +5,7 @@ import fs from "fs";
 export * from "./types";
 
 /**
- * Normalizes a domain name for consistent lookups. (Pure Function)
- * - Converts to lowercase.
- * - Removes leading "www.".
- * @param domain The domain string to normalize.
- * @returns The normalized domain string.
+ * Normalizes a domain name for consistent lookups.
  */
 export const normalizeDomain = (domain: string): string => {
   if (!domain) return "";
@@ -17,10 +13,7 @@ export const normalizeDomain = (domain: string): string => {
 };
 
 /**
- * Parses the raw tracker data string into the TrackerList structure. (Mostly Pure)
- * @param rawData The raw JSON string content of the tracker list.
- * @returns The parsed TrackerList object.
- * @throws {Error} If the JSON parsing fails or the structure is invalid.
+ * Parses the raw tracker data string into the TrackerList structure.
  */
 export const parseTrackerData = (rawData: string): TrackerList => {
   let parsed: any;
@@ -57,10 +50,7 @@ export interface PreparedTrackerData {
 }
 
 /**
- * Prepares the tracker list data for efficient lookups. (Pure Function)
- * Creates a map of normalized tracker domains to their original keys.
- * @param trackerList The parsed TrackerList data.
- * @returns An object containing the original list and the normalized map.
+ * Prepares tracker data for efficient lookups.
  */
 export const prepareTrackerData = (
   trackerList: TrackerList
@@ -93,11 +83,7 @@ export const prepareTrackerData = (
 };
 
 /**
- * Finds tracker information for a given domain using prepared data. (Pure Function)
- * Checks for exact matches and subdomain matches against known trackers.
- * @param domain The domain to check (e.g., "track.example.com").
- * @param preparedData The data prepared by `prepareTrackerData`, or null.
- * @returns The TrackerInfo if found, otherwise null.
+ * Finds tracker information for a domain using prepared data.
  */
 export const findTrackerInfo = (
   domain: string,
@@ -137,10 +123,7 @@ export const findTrackerInfo = (
 };
 
 /**
- * Loads tracker data from a file, parses, and prepares it. (Impure Function - File I/O)
- * This function performs the side effect of reading the file system.
- * @param filePath The absolute or relative path to the tracker JSON file.
- * @returns The PreparedTrackerData object, or null if loading/parsing fails.
+ * Loads tracker data from a file, parses it, and prepares lookup indexes.
  */
 export const loadAndPrepareTrackerData = (
   filePath: string

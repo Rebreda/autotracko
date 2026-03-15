@@ -50,23 +50,6 @@ export interface ScannerConfig {
   launchOptions?: LaunchOptions;
 }
 
-// --- Intermediate Scan Result (Output of scanner.ts) ---
-
-export interface ScanResult {
-  requestedUrl: string;
-  finalUrl: string;
-  domain: string;
-  timestamp: string;
-  screenshotPath: string | null;
-  totalSize: number;
-  resourceUrls: string[];
-  // Trackers identified, info excludes 'rules'
-  trackers: { domain: string; info: Omit<TrackerInfo, "rules"> }[];
-  error?: string;
-  domainMetadata?: Omit<DomainInputEntry, "url">;
-}
-
-// --- Data Collection Helper Type ---
 export interface CollectedData {
   finalUrl: string;
   resourceUrls: string[];
@@ -74,34 +57,34 @@ export interface CollectedData {
   screenshotPath: string | null;
   error?: string;
 }
-
-// --- Final Normalized Output Structure (results.json) ---
-
-// Map of unique tracker domains to their info (rules excluded)
 export interface NormalizedTrackerInfoMap {
   [trackerDomain: string]: Omit<TrackerInfo, "rules">;
 }
 
-// Represents a scan result with tracker references instead of embedded info
-export interface NormalizedScanResult {
+export interface NormalizationOptions {
+  includeAllTrackers?: boolean;
+  stripRules?: boolean;
+}
+
+export interface SiteResult {
   requestedUrl: string;
   finalUrl: string;
   domain: string;
   timestamp: string;
   screenshotPath: string | null;
   totalSize: number;
-  // resourceUrls: string[]; // Optional: Keep if needed, remove to save more space
-  trackerDomains: string[]; // References to keys in NormalizedTrackerInfoMap
+  resourceUrls?: string[];
+  trackerDomains: string[];
+  trackerDetails?: NormalizedTrackerInfoMap;
   error?: string;
   domainMetadata?: Omit<DomainInputEntry, "url">;
 }
 
-// The final structure written to results.json
 export interface FinalOutput {
-  generationTimestamp: string; // Add timestamp for the results file itself
-  sourceFile?: string; // Optional: name of the original intermediate file
-  allTrackers: NormalizedTrackerInfoMap;
-  scanResults: NormalizedScanResult[];
+  generationTimestamp: string;
+  sourceFile?: string;
+  allTrackers?: NormalizedTrackerInfoMap;
+  scanResults: SiteResult[];
 }
 
 // --- Analytics Output Structure ---

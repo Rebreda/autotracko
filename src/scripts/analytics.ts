@@ -1,7 +1,9 @@
 import path from "path";
 import fs from "fs";
-import { ScanResult, FinalOutput } from "../types";
+import { SiteResult, FinalOutput } from "../types";
 import { normalizeResults } from "../utils/normalizeResults";
+
+const DEFAULT_RESULTS_DIR = "results";
 
 // --- Analytics Output Types (Remain the same) ---
 interface FrequencyItem {
@@ -86,6 +88,12 @@ function generateAnalyticsInternal( // Renamed from generateAnalytics
 ): AnalyticsOutput {
   const N_TOP_ITEMS = 20;
   const { allTrackers, scanResults } = data;
+
+  if (!allTrackers) {
+    throw new Error(
+      "Input is missing allTrackers. Re-run scan without --no-tracker-catalog to generate analytics."
+    );
+  }
   const totalSitesProcessed = scanResults.length;
 
   if (totalSitesProcessed === 0) {
@@ -353,7 +361,6 @@ function generateAnalyticsInternal( // Renamed from generateAnalytics
 // saving the final results.json used by analytics.
 
 async function runAnalytics() {
-  // Args for input (intermediate results) and output (analytics)
   const intermediateResultsArg = process.argv.find((arg) =>
     arg.startsWith("--results=")
   );
@@ -364,21 +371,17 @@ async function runAnalytics() {
     arg.startsWith("--analytics-output=")
   ); // Where to save analytics
 
-  // --- File Paths ---
-  // Assume --results points to a file containing ScanResult[] (intermediate)
   const intermediateResultsFilePath = intermediateResultsArg
     ? path.resolve(process.cwd(), intermediateResultsArg.split("=")[1])
-    : path.resolve(process.cwd(), "intermediate_results.json"); // Default intermediate input
+    : path.resolve(process.cwd(), path.join(DEFAULT_RESULTS_DIR, "intermediate_results.json"));
 
-  // Define where the FINAL, NORMALIZED results will be saved
   const finalResultsFilePath = finalResultsPathArg
     ? path.resolve(process.cwd(), finalResultsPathArg.split("=")[1])
-    : path.resolve(process.cwd(), "results.json"); // Default final (normalized) output
+    : path.resolve(process.cwd(), path.join(DEFAULT_RESULTS_DIR, "results.json"));
 
-  // Define where the analytics report will be saved
   const analyticsFilePath = analyticsOutputPathArg
     ? path.resolve(process.cwd(), analyticsOutputPathArg.split("=")[1])
-    : path.resolve(process.cwd(), "analytics.json"); // Default analytics output
+    : path.resolve(process.cwd(), path.join(DEFAULT_RESULTS_DIR, "analytics.json"));
 
   console.log(
     `Reading intermediate results from: ${intermediateResultsFilePath}`
@@ -386,8 +389,7 @@ async function runAnalytics() {
   console.log(`Writing final (normalized) results to: ${finalResultsFilePath}`);
   console.log(`Writing analytics report to: ${analyticsFilePath}`);
 
-  // --- Load Intermediate Results ---
-  let intermediateResultsData: ScanResult[] = [];
+  let intermediateResultsData: SiteResult[] = [];
   try {
     if (!fs.existsSync(intermediateResultsFilePath)) {
       throw new Error(
@@ -395,8 +397,7 @@ async function runAnalytics() {
       );
     }
     const rawData = fs.readFileSync(intermediateResultsFilePath, "utf-8");
-    // IMPORTANT: Assume the intermediate file is an ARRAY of ScanResult
-    intermediateResultsData = JSON.parse(rawData) as ScanResult[];
+    intermediateResultsData = JSON.parse(rawData) as SiteResult[];
     if (!Array.isArray(intermediateResultsData)) {
       throw new Error(`Intermediate results file content is not a JSON array.`);
     }
@@ -405,7 +406,6 @@ async function runAnalytics() {
     process.exit(1);
   }
 
-  // --- Normalize Results ---
   let finalOutputData: FinalOutput;
   try {
     console.log("Normalizing results...");
@@ -413,7 +413,7 @@ async function runAnalytics() {
       intermediateResultsData,
       intermediateResultsFilePath
     );
-    // Save the normalized data
+    fs.mkdirSync(path.dirname(finalResultsFilePath), { recursive: true });
     fs.writeFileSync(
       finalResultsFilePath,
       JSON.stringify(finalOutputData, null, 2),
@@ -427,16 +427,14 @@ async function runAnalytics() {
     process.exit(1);
   }
 
-  // --- Generate Analytics from Normalized Data ---
   try {
     console.log("Generating analytics from normalized data...");
-    // Pass the normalized data structure to the core analytics function
     const analytics = generateAnalyticsInternal(
       finalOutputData,
       finalResultsFilePath
     );
 
-    // Save the analytics output
+    fs.mkdirSync(path.dirname(analyticsFilePath), { recursive: true });
     fs.writeFileSync(
       analyticsFilePath,
       JSON.stringify(analytics, null, 2),

@@ -36,10 +36,13 @@ Thumbs.db
 
 
 # Scraper files
+results/
 screenshots/
 cache/
 domains.json
 cache.json
+results*.json
+analytics*.json
 
 
 data/

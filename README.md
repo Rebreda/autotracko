@@ -10,19 +10,35 @@ Autotracko is a command-line tool designed to automate the process of scanning w
 - **Caching:** Remembers successfully scanned domains to avoid redundant work (can be disabled).
 - **Incremental Results:** Saves results progressively, so work isn't lost if the process is interrupted.
 - **Configurable:** Options for input/output files, caching, tracker list location, and headless browser mode.
+- **Clear Processing Pipeline:** Scanning, normalization, and analytics are separated so each step is easier to test and reason about.
+
+## Data Pipeline
+
+Autotracko uses a two-stage pipeline:
+
+1. **Scanning stage:** Browser automation collects page requests, size estimates, screenshots, and detected trackers.
+2. **Processing stage:** Normalization rewrites the collected scan data into the results format used by analytics.
+
+This separation keeps browser work isolated from the data-processing code.
 
 ## High-Level Results
 
-Running Autotracko on a list of websites produces a JSON output file containing detailed results for each scanned site, including:
+Running Autotracko on a list of websites produces a normalized JSON output file with:
 
 - **Basic Info:** Requested URL, final URL (after redirects), domain name, scan timestamp.
-- **Resources:** A list of all URLs loaded by the page during the scan.
 - **Size:** An approximate total size (in bytes) of loaded resources based on `content-length` headers.
 - **Screenshot:** Path to a full-page screenshot of the rendered website (if enabled).
-- **Trackers:** A list of identified tracker domains found within the loaded resources, along with details about the tracker (owner, prevalence, etc.) sourced from the DuckDuckGo list.
+- **Trackers (Normalized):**
+  - `scanResults[].trackerDomains`: tracker domains referenced by each site.
+  - `allTrackers`: deduplicated map of tracker metadata shared across all sites in the run.
 - **Errors:** Any errors encountered during the scan for a specific site.
 
+`allTrackers` is not redundant with `trackerDomains`: it removes repeated metadata storage when the same tracker appears on multiple websites.
+
 This data allows for analysis of tracking prevalence, identification of specific tracking companies, and understanding resource loading patterns across different websites.
+
+Generated artifacts are written to `results/` by default (scan output, cache, screenshots, and analytics outputs).
+Screenshot filenames are stable per final URL, so reruns overwrite the same files instead of creating timestamped duplicates.
 
 ## Setup
 
@@ -52,6 +68,15 @@ This data allows for analysis of tracking prevalence, identification of specific
     This pulls down the latest tracker list from github.
 
 5.  **Prepare Domains JSON:** Create a JSON file (e.g., `domains.json` in the project root) containing an array of objects, where each object represents a website to scan. You can `cp example.domains.json domains.json` to get started quickly.
+
+6.  **Validate/Format Domains JSON (Optional but recommended):**
+
+  ```bash
+  npm run domains:check
+  npm run domains:fix
+  ```
+
+  Use `domains:check` to validate structure and catch duplicates. Use `domains:fix` to rewrite the file with consistent formatting and key order.
 
     _Example `domains.json`:_
 
@@ -106,33 +131,36 @@ Run the scanner using Node.js (via `ts-node` for development or after building w
 
 ```bash
 # Using ts-node (for development)
-npx ts-node src/index.ts --domains domains.json --output results.json
+npx ts-node src/index.ts --domains domains.json --output results/results.json
 ```
+
+Default output path is `results/results.json`, so `--output` is optional unless you want a custom location.
 
 ### After building (npm run build)
 
-`node dist/index.js --domains domains.json --output results.json`
+`node dist/index.js --domains domains.json --output results/results.json`
 
 Using npm/yarn script:
 
 ### Ensure domains.json exists
 
-`npm run scan -- --domains domains.json --output results.json`
+`npm run scan -- --domains domains.json --output results/results.json`
 
 ### or
 
-`yarn scan --domains domains.json --output results.json`
+`yarn scan --domains domains.json --output results/results.json`
 
 (Note the extra -- when passing arguments via npm run)
 
 Command-Line Options:
 
     -d, --domains <path>: Path to the text file containing URLs to scan (default: domains.json).
-    -o, --output <path>: Path to the output JSON file for results (default: results.json).
-    -c, --cache <path>: Path to the cache file (default: cache.json). Caching is enabled by default.
+    -o, --output <path>: Path to the output JSON file for results (default: results/results.json).
+    -c, --cache <path>: Path to the cache file (default: results/cache.json). Caching is enabled by default.
     --no-cache: Disables reading from or writing to the cache file.
     -t, --tracker-list <path>: Path to the tracker list JSON file (default: src/data/extension-mv3-tds.json).
     --headless <mode>: Run browser headless ('new', 'true', 'false') (default: 'new'). Use 'false' to see the browser window.
+    --no-tracker-catalog: Omit `allTrackers` from output for smaller files (analytics requires tracker catalog, so keep default for analytics runs).
     -h, --help: Display help information.
 
 Example with Options:
