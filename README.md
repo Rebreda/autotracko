@@ -11,6 +11,7 @@ Autotracko is a command-line tool designed to automate the process of scanning w
 - **Incremental Results:** Saves results progressively, so work isn't lost if the process is interrupted.
 - **Configurable:** Options for input/output files, caching, tracker list location, and headless browser mode.
 - **Clear Processing Pipeline:** Scanning, normalization, and analytics are separated so each step is easier to test and reason about.
+- **Access-State Detection:** Marks blocked and restricted pages so they are not mistaken for genuine zero-tracker results.
 
 ## Data Pipeline
 
@@ -26,19 +27,20 @@ This separation keeps browser work isolated from the data-processing code.
 Running Autotracko on a list of websites produces a normalized JSON output file with:
 
 - **Basic Info:** Requested URL, final URL (after redirects), domain name, scan timestamp.
+- **Access State:** `accessStatus`, `accessReason`, optional `httpStatus`, and `pageTitle` to capture bot blocks, access denials, paywalls, and similar restrictions.
 - **Size:** An approximate total size (in bytes) of loaded resources based on `content-length` headers.
 - **Screenshot:** Path to a full-page screenshot of the rendered website (if enabled).
 - **Trackers (Normalized):**
   - `scanResults[].trackerDomains`: tracker domains referenced by each site.
   - `allTrackers`: deduplicated map of tracker metadata shared across all sites in the run.
-- **Errors:** Any errors encountered during the scan for a specific site.
+- **Errors:** Any thrown errors encountered during the scan for a specific site.
 
 `allTrackers` is not redundant with `trackerDomains`: it removes repeated metadata storage when the same tracker appears on multiple websites.
 
 This data allows for analysis of tracking prevalence, identification of specific tracking companies, and understanding resource loading patterns across different websites.
 
-Generated artifacts are written to `results/` by default (scan output, cache, screenshots, and analytics outputs).
-Screenshot filenames are stable per final URL, so reruns overwrite the same files instead of creating timestamped duplicates.
+Generated artifacts are written to `results/` by default. Each scan run gets its own subdirectory such as `results/2026-03-15_16-04-00/results.json`, while the shared cache lives at `results/cache.json`.
+Screenshot filenames are stable per final URL within a run directory.
 
 ## Setup
 
@@ -131,31 +133,31 @@ Run the scanner using Node.js (via `ts-node` for development or after building w
 
 ```bash
 # Using ts-node (for development)
-npx ts-node src/index.ts --domains domains.json --output results/results.json
+npx ts-node src/index.ts --domains domains.json
 ```
 
-Default output path is `results/results.json`, so `--output` is optional unless you want a custom location.
+Default output path is `results/<run-id>/results.json`, so `--output` is optional unless you want a custom location.
 
 ### After building (npm run build)
 
-`node dist/index.js --domains domains.json --output results/results.json`
+`node dist/index.js --domains domains.json`
 
 Using npm/yarn script:
 
 ### Ensure domains.json exists
 
-`npm run scan -- --domains domains.json --output results/results.json`
+`npm run scan -- --domains domains.json`
 
 ### or
 
-`yarn scan --domains domains.json --output results/results.json`
+`yarn scan --domains domains.json`
 
 (Note the extra -- when passing arguments via npm run)
 
 Command-Line Options:
 
     -d, --domains <path>: Path to the text file containing URLs to scan (default: domains.json).
-    -o, --output <path>: Path to the output JSON file for results (default: results/results.json).
+    -o, --output <path>: Path to the output JSON file for results (default: results/<run-id>/results.json).
     -c, --cache <path>: Path to the cache file (default: results/cache.json). Caching is enabled by default.
     --no-cache: Disables reading from or writing to the cache file.
     -t, --tracker-list <path>: Path to the tracker list JSON file (default: src/data/extension-mv3-tds.json).

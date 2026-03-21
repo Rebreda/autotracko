@@ -192,6 +192,8 @@ program
     let processedCount = 0;
     let skippedCount = 0;
     let errorCount = 0;
+    let blockedCount = 0;
+    let restrictedCount = 0;
 
     // Iterate through the input objects
     for (const domainInput of domainInputs) {
@@ -241,6 +243,19 @@ program
           scanError = scanResultData.error;
           success = false;
           errorCount++;
+        } else if (scanResultData.accessStatus !== "ok") {
+          console.warn(
+            `Scan for ${url} completed with ${scanResultData.accessStatus} access: ${scanResultData.accessReason || "unknown reason"}`
+          );
+          scanError = scanResultData.accessReason;
+          success = false;
+          errorCount++;
+          if (scanResultData.accessStatus === "blocked") {
+            blockedCount++;
+          }
+          if (scanResultData.accessStatus === "restricted") {
+            restrictedCount++;
+          }
         } else {
           console.log(
             `Finished ${url}. Found ${scanResultData.trackerDomains.length} trackers.`
@@ -267,6 +282,8 @@ program
           timestamp: new Date().toISOString(),
           screenshotPath: null,
           totalSize: 0,
+          accessStatus: "error",
+          accessReason: err.message,
           resourceUrls: [],
           trackerDomains: [],
           trackerDetails: {},
@@ -362,7 +379,9 @@ program
     console.log(`Total entries in input file: ${domainInputs.length}`);
     console.log(`Successfully processed scans: ${processedCount}`);
     console.log(`Skipped (cached or invalid): ${skippedCount}`);
-    console.log(`Errors during scanning: ${errorCount}`);
+    console.log(`Non-successful scans: ${errorCount}`);
+    console.log(`Blocked pages detected: ${blockedCount}`);
+    console.log(`Restricted pages detected: ${restrictedCount}`);
     console.log(`Total results processed for normalization: ${siteResults.length}`);
     console.log(`Final normalized results saved to ${resultsFilePath}`);
     if (cacheEnabled) {

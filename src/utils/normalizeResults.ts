@@ -37,6 +37,10 @@ export function normalizeResults(
       timestamp: result.timestamp,
       screenshotPath: result.screenshotPath,
       totalSize: result.totalSize,
+      httpStatus: result.httpStatus,
+      pageTitle: result.pageTitle,
+      accessStatus: result.accessStatus,
+      accessReason: result.accessReason,
       trackerDomains: [...result.trackerDomains].sort((a, b) =>
         a.localeCompare(b)
       ),

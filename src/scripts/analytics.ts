@@ -25,6 +25,8 @@ interface AnalyticsOutput {
   summary: {
     totalSitesProcessed: number;
     sitesWithErrors: number;
+    sitesBlocked: number;
+    sitesRestricted: number;
     sitesWithTrackers: number; // Sites with at least one tracker reference
     totalTrackerInstances: number; // Total references across all sites
     totalUniqueTrackerDomains: number; // Count from allTrackers map
@@ -101,6 +103,8 @@ function generateAnalyticsInternal( // Renamed from generateAnalytics
   }
 
   let sitesWithErrors = 0;
+  let sitesBlocked = 0;
+  let sitesRestricted = 0;
   let sitesWithTrackers = 0;
   let totalTrackerInstances = 0; // Sum of trackerDomains.length across all results
   let totalPageSize = 0;
@@ -139,9 +143,18 @@ function generateAnalyticsInternal( // Renamed from generateAnalytics
   const totalUniqueTrackerDomains = Object.keys(allTrackers).length;
 
   for (const result of scanResults) {
-    // Iterate through NormalizedScanResult
-    if (result.error) {
+    const isBlocked = result.accessStatus === "blocked";
+    const isRestricted = result.accessStatus === "restricted";
+    const hasAccessFailure = isBlocked || isRestricted || result.accessStatus === "error";
+
+    if (result.error || hasAccessFailure) {
       sitesWithErrors++;
+    }
+    if (isBlocked) {
+      sitesBlocked++;
+    }
+    if (isRestricted) {
+      sitesRestricted++;
     }
     totalPageSize += result.totalSize || 0;
 
@@ -235,6 +248,8 @@ function generateAnalyticsInternal( // Renamed from generateAnalytics
   const summary = {
     totalSitesProcessed,
     sitesWithErrors,
+    sitesBlocked,
+    sitesRestricted,
     sitesWithTrackers,
     totalTrackerInstances,
     totalUniqueTrackerDomains: totalUniqueTrackerDomains, // Use count from allTrackers

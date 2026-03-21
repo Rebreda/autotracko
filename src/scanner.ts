@@ -11,6 +11,44 @@ import {
   NormalizedTrackerInfoMap,
 } from "./types";
 
+const ACCESS_STATUS_PATTERNS: Array<{
+  status: "restricted" | "blocked";
+  reason: string;
+  patterns: RegExp[];
+}> = [
+  {
+    status: "blocked",
+    reason: "Access denied or bot protection page detected",
+    patterns: [
+      /access denied/i,
+      /request blocked/i,
+      /forbidden/i,
+      /verify you are human/i,
+      /captcha/i,
+      /bot detection/i,
+      /pardon our interruption/i,
+      /press and hold/i,
+      /enable javascript and cookies to continue/i,
+    ],
+  },
+  {
+    status: "restricted",
+    reason: "Restricted content page detected",
+    patterns: [
+      /subscribe to continue/i,
+      /subscription required/i,
+      /sign in to continue/i,
+      /log in to continue/i,
+      /not available in your region/i,
+      /unavailable in your region/i,
+      /content unavailable/i,
+      /temporarily unavailable/i,
+      /premium content/i,
+      /continue reading/i,
+    ],
+  },
+];
+
 const DEFAULT_CONFIG: Required<ScannerConfig> = {
   userAgent:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
@@ -44,6 +82,40 @@ const getStableScreenshotFileName = (url: string): string => {
   return `${hostname}-${digest}.png`;
 };
 
+export const detectPageAccess = (
+  httpStatus?: number,
+  pageTitle?: string,
+  bodyText?: string,
+  finalUrl?: string
+): Pick<CollectedData, "accessStatus" | "accessReason"> => {
+  if (httpStatus && [401, 403, 429, 451].includes(httpStatus)) {
+    return {
+      accessStatus: "blocked",
+      accessReason: `HTTP ${httpStatus} response indicates access was blocked`,
+    };
+  }
+
+  if (httpStatus && [402, 407].includes(httpStatus)) {
+    return {
+      accessStatus: "restricted",
+      accessReason: `HTTP ${httpStatus} response indicates restricted access`,
+    };
+  }
+
+  const combinedText = [pageTitle, bodyText, finalUrl].filter(Boolean).join("\n");
+
+  for (const matcher of ACCESS_STATUS_PATTERNS) {
+    if (matcher.patterns.some((pattern) => pattern.test(combinedText))) {
+      return {
+        accessStatus: matcher.status,
+        accessReason: matcher.reason,
+      };
+    }
+  }
+
+  return { accessStatus: "ok" };
+};
+
 const collectWebsiteData = async (
   url: string,
   config: Required<ScannerConfig>
@@ -55,6 +127,7 @@ const collectWebsiteData = async (
     resourceUrls: [],
     totalSize: 0,
     screenshotPath: null,
+    accessStatus: "ok",
   };
 
   try {
@@ -87,16 +160,37 @@ const collectWebsiteData = async (
 
     // Update final URL after potential redirects
     collected.finalUrl = page.url();
+    collected.pageTitle = await page.title();
 
     if (!navigationResponse) {
       console.warn(`Navigation to ${url} returned null response.`);
       // Decide if this is an error or just a warning
       // collected.error = "Navigation failed to return a response.";
-    } else if (!navigationResponse.ok()) {
+    } else {
+      collected.httpStatus = navigationResponse.status();
+    }
+
+    if (navigationResponse && !navigationResponse.ok()) {
       console.warn(
         `Navigation to ${url} failed with status: ${navigationResponse.status()}`
       );
       // collected.error = `Navigation failed with status: ${navigationResponse.status()}`;
+    }
+
+    const pageText = await page.evaluate(() => document.body?.innerText || "");
+    const accessDetails = detectPageAccess(
+      collected.httpStatus,
+      collected.pageTitle,
+      pageText,
+      collected.finalUrl
+    );
+    collected.accessStatus = accessDetails.accessStatus;
+    collected.accessReason = accessDetails.accessReason;
+
+    if (collected.accessStatus !== "ok") {
+      console.warn(
+        `Page access for ${url} classified as ${collected.accessStatus}: ${collected.accessReason}`
+      );
     }
 
     // --- Screenshot Logic ---
@@ -128,6 +222,8 @@ const collectWebsiteData = async (
       `Error during website data collection for ${url}: ${err.message}`
     );
     collected.error = err.message; // Capture the primary error
+    collected.accessStatus = "error";
+    collected.accessReason = err.message;
   } finally {
     if (browser) {
       try {
@@ -195,6 +291,10 @@ export const scanWebsite = async (
     timestamp: startTime.toISOString(),
     screenshotPath: collectedData.screenshotPath,
     totalSize: collectedData.totalSize,
+    httpStatus: collectedData.httpStatus,
+    pageTitle: collectedData.pageTitle,
+    accessStatus: collectedData.accessStatus,
+    accessReason: collectedData.accessReason,
     resourceUrls: collectedData.resourceUrls,
     trackerDomains: Object.keys(trackerDetails),
     trackerDetails,

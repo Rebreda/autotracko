@@ -55,6 +55,10 @@ export interface CollectedData {
   resourceUrls: string[];
   totalSize: number;
   screenshotPath: string | null;
+  httpStatus?: number;
+  pageTitle?: string;
+  accessStatus: "ok" | "restricted" | "blocked" | "error";
+  accessReason?: string;
   error?: string;
 }
 export interface NormalizedTrackerInfoMap {
@@ -73,6 +77,10 @@ export interface SiteResult {
   timestamp: string;
   screenshotPath: string | null;
   totalSize: number;
+  httpStatus?: number;
+  pageTitle?: string;
+  accessStatus: "ok" | "restricted" | "blocked" | "error";
+  accessReason?: string;
   resourceUrls?: string[];
   trackerDomains: string[];
   trackerDetails?: NormalizedTrackerInfoMap;

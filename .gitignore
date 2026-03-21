@@ -39,7 +39,7 @@ Thumbs.db
 results/
 screenshots/
 cache/
-domains.json
+domains*.json
 cache.json
 results*.json
 analytics*.json

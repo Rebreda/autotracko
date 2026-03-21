@@ -8,6 +8,9 @@ const sampleScanResult: SiteResult = {
   timestamp: "2026-01-01T00:00:00.000Z",
   screenshotPath: null,
   totalSize: 1234,
+  httpStatus: 200,
+  pageTitle: "Example Domain",
+  accessStatus: "ok",
   resourceUrls: ["https://cdn.example.com/script.js"],
   trackerDomains: ["tracker-a.com", "tracker-b.com"],
   trackerDetails: {
@@ -64,6 +67,9 @@ describe("normalizeResults", () => {
       "tracker-a.com",
       "tracker-b.com",
     ]);
+    expect(out.scanResults[0].accessStatus).toBe("ok");
+    expect(out.scanResults[0].httpStatus).toBe(200);
+    expect(out.scanResults[0].pageTitle).toBe("Example Domain");
     expect(out.allTrackers).toBeDefined();
     expect(Object.keys(out.allTrackers || {})).toHaveLength(2);
 
